@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import { connect } from 'react-redux';
+import { setSearch } from './actions';
 
 class App extends Component {
   render() {
-    const { loading, people, search } = this.props;
+    const { loading, people, setSearch } = this.props;
     return (
       <main>
         <header>
@@ -24,7 +26,7 @@ class App extends Component {
         <input
             type="text"
             placeholder="Name..."
-            onChange={e => search(e.target.value)}
+            onChange={e => setSearch(e.target.value)}
         />
         {loading ? (
           <p>Loading…</p>
@@ -42,26 +44,27 @@ class App extends Component {
   }
 }
 
-export default graphql(
+const GQLApp = graphql(
   gql`
-    query getPeople($name: String) {
-      people(name: $name) {
+    query getPeople($search: String) {
+      people(search: $search) {
         id
         name
       }
     }
   `, {
-    props: ({ data }) => ({
+    options: ({ search }) => ({
+      variables: {
+        search,
+      },
+    }),
+    props: ({ data, ownProps }) => ({
+      ...ownProps,
       ...data,
-      search: str => data.fetchMore({
-        variables: {
-          name: str,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => ({
-          ...prev,
-          ...fetchMoreResult.data,
-        }),
-      })
     }),
   }
 )(App)
+
+export default connect(state => ({
+    search: state.search,
+}), { setSearch })(GQLApp);

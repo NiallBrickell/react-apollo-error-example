@@ -26,13 +26,13 @@ const QueryType = new GraphQLObjectType({
     people: {
       type: new GraphQLList(PersonType),
       args: {
-        name: {
+        search: {
           type: GraphQLString,
         },
       },
-      resolve: (root, { name }) => {
-        if (name) return peopleData.filter(
-          person => person.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      resolve: (root, { search }) => {
+        if (search) return peopleData.filter(
+          person => person.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
         );
         return peopleData;
       }
