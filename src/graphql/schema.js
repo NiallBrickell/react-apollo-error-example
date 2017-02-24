@@ -25,7 +25,17 @@ const QueryType = new GraphQLObjectType({
   fields: {
     people: {
       type: new GraphQLList(PersonType),
-      resolve: () => peopleData,
+      args: {
+        name: {
+          type: GraphQLString,
+        },
+      },
+      resolve: (root, { name }) => {
+        if (name) return peopleData.filter(
+          person => person.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        );
+        return peopleData;
+      }
     },
   },
 });

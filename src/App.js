@@ -4,7 +4,7 @@ import { graphql } from 'react-apollo';
 
 class App extends Component {
   render() {
-    const { data: { loading, people } } = this.props;
+    const { loading, people, search } = this.props;
     return (
       <main>
         <header>
@@ -21,6 +21,11 @@ class App extends Component {
             Currently the schema just serves a list of people with names and ids.
           </p>
         </header>
+        <input
+            type="text"
+            placeholder="Name..."
+            onChange={e => search(e.target.value)}
+        />
         {loading ? (
           <p>Loading…</p>
         ) : (
@@ -38,10 +43,25 @@ class App extends Component {
 }
 
 export default graphql(
-  gql`{
-    people {
-      id
-      name
+  gql`
+    query getPeople($name: String) {
+      people(name: $name) {
+        id
+        name
+      }
     }
-  }`,
+  `, {
+    props: ({ data }) => ({
+      ...data,
+      search: str => data.fetchMore({
+        variables: {
+          name: str,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => ({
+          ...prev,
+          ...fetchMoreResult.data,
+        }),
+      })
+    }),
+  }
 )(App)
