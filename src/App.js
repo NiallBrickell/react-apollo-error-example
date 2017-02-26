@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import { connect } from 'react-redux';
-import { setSearch } from './actions';
+// import { setSearch } from './actions';
 
 class App extends Component {
   render() {
+    // Rendering isn't called with new props after updateQuery
+    console.log(this.props.test);
     const { loading, people, setSearch } = this.props;
     return (
       <main>
@@ -61,10 +63,22 @@ const GQLApp = graphql(
     props: ({ data, ownProps }) => ({
       ...ownProps,
       ...data,
+
+      setSearch: str => data.fetchMore({
+        variables: {
+          search: str,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          console.log('updating');
+          return {
+            test: 'fake',
+          };
+        },
+      }),
     }),
   }
 )(App)
 
 export default connect(state => ({
     search: state.search,
-}), { setSearch })(GQLApp);
+}), {  })(GQLApp);
