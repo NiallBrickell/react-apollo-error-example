@@ -7,9 +7,10 @@ import { connect } from 'react-redux';
 class App extends Component {
   render() {
     // Added keys in updateQuery not reflected in props
-    const { loading, people, setSearch } = this.props;
-    console.log(people && people[0].test);
-    console.log(people && people[0].test2);
+    const { loading, people, setSearch, test } = this.props;
+    console.log(test);
+    console.log(people && people[0] && people[0].test);
+    console.log(people && people[0] && people[0].test2);
     return (
       <main>
         <header>
@@ -70,6 +71,7 @@ const GQLApp = graphql(
           search: str,
         },
         updateQuery: (prev, { fetchMoreResult }) => ({
+          test: 'test',
           people: fetchMoreResult.data.people.map(person => ({
             ...person,
             test2: 'fake2',
