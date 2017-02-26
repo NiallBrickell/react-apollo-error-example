@@ -33,7 +33,10 @@ const QueryType = new GraphQLObjectType({
       resolve: (root, { search }) => {
         if (search) return peopleData.filter(
           person => person.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
-        );
+        ).map(person => ({
+          ...person,
+          test: 'fake',
+        }));
         return peopleData;
       }
     },
