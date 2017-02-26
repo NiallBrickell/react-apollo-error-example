@@ -11,6 +11,7 @@ const PersonType = new GraphQLObjectType({
   fields: {
     id: { type: GraphQLID },
     name: { type: GraphQLString },
+    test: { type: GraphQLString },
   },
 });
 

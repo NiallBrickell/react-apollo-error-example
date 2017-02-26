@@ -50,16 +50,18 @@ class App extends Component {
 
 const GQLApp = graphql(
   gql`
-    query getPeople($search: String) {
+    query getPeople($search: String, $includeTest: Boolean!) {
       people(search: $search) {
         id
         name
+        test @include(if: $includeTest)
       }
     }
   `, {
     options: ({ search }) => ({
       variables: {
         search,
+        includeTest: false,
       },
     }),
     props: ({ data, ownProps }) => ({
@@ -69,6 +71,7 @@ const GQLApp = graphql(
       setSearch: str => data.fetchMore({
         variables: {
           search: str,
+          includeTest: true,
         },
         updateQuery: (prev, { fetchMoreResult }) => ({
           test: 'test',
